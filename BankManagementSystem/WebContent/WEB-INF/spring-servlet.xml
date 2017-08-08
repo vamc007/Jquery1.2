@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+http://www.springframework.org/schema/context  
+http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/tx 
+ http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<context:component-scan base-package="com.bankmanagement.controller"></context:component-scan>
+	<mvc:annotation-driven validator="myBeansValidator" />
+	<bean id="myBeansValidator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="/WEB-INF/transactionmessages" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	<mvc:interceptors>
+		<bean id="localeChangeInterceptor"
+			class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+			<property name="paramName" value="language" />
+		</bean>
+	</mvc:interceptors>
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+		<property name="defaultLocale" value="en" />
+		<property name="cookieName" value="localeCookie" />
+		<property name="cookieMaxAge" value="3600" />
+	</bean>
+
+
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource" ref="messageSource" />
+	</bean>
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/bms" />
+		<property name="username" value="root" />
+		<property name="password" value="password-1" />
+	</bean>
+
+	<bean id="factory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
+	</bean>
+
+	<bean id="performTransactionBO" class="com.bankmanagement.bo.PerformTransactionBO" />
+
+	<bean id="viewTransactionDAO" class="com.bankmanagement.dao.ViewTransactionDAOImpl"
+		autowire="constructor" />
+
+	<bean id="performTransactionDAO" class="com.bankmanagement.dao.PerformTransactionDAOImpl"
+		autowire="constructor" />
+
+	<bean id="userDetailsDAO" class="com.bankmanagement.dao.UserDetailsDAOImpl"
+		autowire="constructor" />
+
+	<bean id="viewTransactionService" class="com.bankmanagement.service.ViewTransactionServiceImpl"
+		autowire="constructor" />
+
+	<bean id="performTransactionService"
+		class="com.bankmanagement.service.PerformTransactionServiceImpl"
+		autowire="constructor" />
+
+	<bean id="performTransactionController"
+		class="com.bankmanagement.controller.PerformTransactionController"
+		autowire="constructor" />
+
+	<bean id="viewTransactionController" class="com.bankmanagement.controller.ViewTransactionController"
+		autowire="constructor" />
+
+</beans>
